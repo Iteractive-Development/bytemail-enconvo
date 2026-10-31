@@ -29,7 +29,12 @@
       "description": "Find mail across every shared ByteMail account. Input: search words and ByteMail operators such as from:, to:, subject:, file:.",
       "commandType": "command",
       "mode": "no-view",
-      "keywords": ["mail", "email", "find", "inbox"]
+      "keywords": [
+        "mail",
+        "email",
+        "find",
+        "inbox"
+      ]
     },
     {
       "name": "draft",
@@ -37,7 +42,12 @@
       "description": "Write a draft in ByteMail from the text you give. It never sends: the draft opens in ByteMail tagged Drafted by, for review and sending. Input: JSON {\"to\":\"a@b.c\",\"subject\":\"...\",\"body\":\"...\"} or lines 'to: a@b.c', 'subject: ...', then the body.",
       "commandType": "command",
       "mode": "no-view",
-      "keywords": ["compose", "email", "write", "reply"]
+      "keywords": [
+        "compose",
+        "email",
+        "write",
+        "reply"
+      ]
     },
     {
       "name": "triage",
@@ -45,7 +55,13 @@
       "description": "Summarize what is waiting in ByteMail: To Reply, Flagged and Snoozed, and propose what to archive or snooze. It only proposes; nothing changes until you say so.",
       "commandType": "command",
       "mode": "no-view",
-      "keywords": ["inbox", "to reply", "flagged", "snoozed", "clean"]
+      "keywords": [
+        "inbox",
+        "to reply",
+        "flagged",
+        "snoozed",
+        "clean"
+      ]
     },
     {
       "name": "unsubscribe_finder",
@@ -53,7 +69,12 @@
       "description": "Find newsletters with unsubscribe links across your ByteMail accounts and rank the senders. Unsubscribing always asks in ByteMail first.",
       "commandType": "command",
       "mode": "no-view",
-      "keywords": ["newsletter", "unsubscribe", "spam", "promos"]
+      "keywords": [
+        "newsletter",
+        "unsubscribe",
+        "spam",
+        "promos"
+      ]
     },
     {
       "name": "followups",
@@ -61,7 +82,12 @@
       "description": "Remind you if nobody answers a ByteMail conversation you sent. Input: 'query | YYYY-MM-DD' (date optional, default three days out) or a thread_id. With a thread_id the reminder is set; otherwise matching sent conversations are listed.",
       "commandType": "command",
       "mode": "no-view",
-      "keywords": ["remind", "no reply", "follow up", "nudge"]
+      "keywords": [
+        "remind",
+        "no reply",
+        "follow up",
+        "nudge"
+      ]
     },
     {
       "name": "doctor",
@@ -69,7 +95,13 @@
       "description": "Check the ByteMail app, its MCP server, account sharing and its 27 tools, and print what to fix when something is off.",
       "commandType": "command",
       "mode": "no-view",
-      "keywords": ["setup", "check", "fix", "health", "status"]
+      "keywords": [
+        "setup",
+        "check",
+        "fix",
+        "health",
+        "status"
+      ]
     }
   ],
   "preferences": [
@@ -131,7 +163,7 @@
       "negative": [
         {
           "description": "Sharing off fails with the exact fix.",
-          "prompt": "With ByteMail's account sharing switched off, run any command or route. Expect SHARING_OFF (409) naming ByteMail \u203a Settings \u203a AI as the fix.",
+          "prompt": "With ByteMail's account sharing switched off, run any command or route. Expect SHARING_OFF (409) naming ByteMail › Settings › AI as the fix.",
           "expected_behavior": "A typed SHARING_OFF error with the remediation hint; never a hang or a wrong-code 500.",
           "tools_triggered": "bytemail-enconvo|search"
         },
@@ -182,9 +214,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@enconvo/api": "latest"
-  },
-  "devDependencies": {
+    "@enconvo/api": "latest",
     "@types/node": "^22.0.0",
     "tsup": "^8.5.1",
     "typescript": "^5.9.3"
