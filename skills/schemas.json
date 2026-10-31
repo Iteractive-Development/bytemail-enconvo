@@ -1,0 +1,148 @@
+[
+  {
+    "name": "search",
+    "title": "ByteMail Search",
+    "description": "Find mail across every shared ByteMail account. Input: search words and ByteMail operators such as from:, to:, subject:, file:.",
+    "routePath": "bytemail-enconvo/search"
+  },
+  {
+    "name": "draft",
+    "title": "ByteMail Draft",
+    "description": "Write a draft in ByteMail from the text you give. It never sends: the draft opens in ByteMail tagged Drafted by, for review and sending. Input: JSON {\"to\":\"a@b.c\",\"subject\":\"...\",\"body\":\"...\"} or lines 'to: a@b.c', 'subject: ...', then the body.",
+    "routePath": "bytemail-enconvo/draft"
+  },
+  {
+    "name": "triage",
+    "title": "ByteMail Inbox Triage",
+    "description": "Summarize what is waiting in ByteMail: To Reply, Flagged and Snoozed, and propose what to archive or snooze. It only proposes; nothing changes until you say so.",
+    "routePath": "bytemail-enconvo/triage"
+  },
+  {
+    "name": "unsubscribe_finder",
+    "title": "ByteMail Unsubscribe Finder",
+    "description": "Find newsletters with unsubscribe links across your ByteMail accounts and rank the senders. Unsubscribing always asks in ByteMail first.",
+    "routePath": "bytemail-enconvo/unsubscribe_finder"
+  },
+  {
+    "name": "followups",
+    "title": "ByteMail Follow-ups",
+    "description": "Remind you if nobody answers a ByteMail conversation you sent. Input: 'query | YYYY-MM-DD' (date optional, default three days out) or a thread_id. With a thread_id the reminder is set; otherwise matching sent conversations are listed.",
+    "routePath": "bytemail-enconvo/followups"
+  },
+  {
+    "name": "doctor",
+    "title": "ByteMail Doctor",
+    "description": "Check the ByteMail app, its MCP server, account sharing and its 27 tools, and print what to fix when something is off.",
+    "routePath": "bytemail-enconvo/doctor"
+  },
+  {
+    "name": "archive",
+    "title": "archive",
+    "description": "Archive conversations in ByteMail. At most 25 per call: ByteMail asks the user about anything bigger, so split large batches. @param {Request} request - Request object, body is {@link ArchiveParams}",
+    "routePath": "bytemail-enconvo/archive",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    }
+  },
+  {
+    "name": "create_draft",
+    "title": "create_draft",
+    "description": "Write a draft in ByteMail for the user to review and send. It never sends: the draft opens in ByteMail tagged \"Drafted by\". To send, use bytemail/mcp_call with tool \"send_draft\" — ByteMail asks the user first. @param {Request} request - Request object, body is {@link CreateDraftParams}",
+    "routePath": "bytemail-enconvo/create_draft",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    }
+  },
+  {
+    "name": "find_attachments",
+    "title": "find_attachments",
+    "description": "Read-only: find files attached to mail, on this Mac and on the mail servers, newest first (wraps ByteMail's find_attachments tool). @param {Request} request - Request object, body is {@link FindAttachmentsParams}",
+    "routePath": "bytemail-enconvo/find_attachments",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    }
+  },
+  {
+    "name": "find_contacts",
+    "title": "find_contacts",
+    "description": "Read-only: people in the shared ByteMail accounts' mail whose name or address matches, most-written-to first. Turns a name into an address. @param {Request} request - Request object, body is {@link FindContactsParams}",
+    "routePath": "bytemail-enconvo/find_contacts",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    }
+  },
+  {
+    "name": "get_thread",
+    "title": "get_thread",
+    "description": "Read-only: every message of one ByteMail conversation, oldest first, quoted history removed (wraps ByteMail's get_thread tool). @param {Request} request - Request object, body is {@link GetThreadParams}",
+    "routePath": "bytemail-enconvo/get_thread",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    }
+  },
+  {
+    "name": "list_threads",
+    "title": "list_threads",
+    "description": "Read-only: conversations in a ByteMail mailbox, newest first (wraps ByteMail's list_threads tool). @param {Request} request - Request object, body is {@link ListThreadsParams}",
+    "routePath": "bytemail-enconvo/list_threads",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    }
+  },
+  {
+    "name": "mcp_call",
+    "title": "mcp_call",
+    "description": "Run any live ByteMail MCP tool by name — tools/call only, never raw RPC; the name must match ByteMail's own tools/list. ByteMail's in-app approvals still apply: send, rules, label removal, unsubscribe and block ask the user first. @param {Request} request - Request object, body is {@link McpCallParams}",
+    "routePath": "bytemail-enconvo/mcp_call",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    }
+  },
+  {
+    "name": "search_messages",
+    "title": "search_messages",
+    "description": "Read-only: find messages across every shared ByteMail account, wrapping ByteMail's search_messages tool. All given filters must match. @param {Request} request - Request object, body is {@link SearchParams}",
+    "routePath": "bytemail-enconvo/search_messages",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    }
+  },
+  {
+    "name": "snooze",
+    "title": "snooze",
+    "description": "Snooze conversations in ByteMail until a moment, when they come back to the inbox as new. At most 25 per call. @param {Request} request - Request object, body is {@link SnoozeParams}",
+    "routePath": "bytemail-enconvo/snooze",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    }
+  },
+  {
+    "name": "status",
+    "title": "status",
+    "description": "Read-only health check: is ByteMail installed, is its MCP server answering, is mail being shared, and which tools and accounts are live. Body is {@link StatusParams}. @param {Request} request - Request object, body is {@link StatusParams}",
+    "routePath": "bytemail-enconvo/status",
+    "parameters": {
+      "type": "object",
+      "properties": {},
+      "required": []
+    }
+  }
+]

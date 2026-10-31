@@ -1,0 +1,192 @@
+{
+  "$schema": "https://enconvo.com/schemas/extension.json",
+  "name": "bytemail-enconvo",
+  "version": "1.0.0",
+  "title": "ByteMail",
+  "description": "Search, draft and tidy every ByteMail inbox from Enconvo, with ByteMail's 27-tool MCP server wired in natively.",
+  "short_description": "Every ByteMail inbox, native in Enconvo",
+  "author": "Iteractive Development",
+  "icon": "icon.png",
+  "license": "MIT",
+  "type": "module",
+  "categories": [
+    "Communication",
+    "Productivity"
+  ],
+  "keywords": [
+    "email",
+    "mail",
+    "inbox",
+    "bytemail",
+    "gmail",
+    "imap",
+    "mcp"
+  ],
+  "commands": [
+    {
+      "name": "search",
+      "title": "ByteMail Search",
+      "description": "Find mail across every shared ByteMail account. Input: search words and ByteMail operators such as from:, to:, subject:, file:.",
+      "commandType": "command",
+      "mode": "no-view",
+      "keywords": ["mail", "email", "find", "inbox"]
+    },
+    {
+      "name": "draft",
+      "title": "ByteMail Draft",
+      "description": "Write a draft in ByteMail from the text you give. It never sends: the draft opens in ByteMail tagged Drafted by, for review and sending. Input: JSON {\"to\":\"a@b.c\",\"subject\":\"...\",\"body\":\"...\"} or lines 'to: a@b.c', 'subject: ...', then the body.",
+      "commandType": "command",
+      "mode": "no-view",
+      "keywords": ["compose", "email", "write", "reply"]
+    },
+    {
+      "name": "triage",
+      "title": "ByteMail Inbox Triage",
+      "description": "Summarize what is waiting in ByteMail: To Reply, Flagged and Snoozed, and propose what to archive or snooze. It only proposes; nothing changes until you say so.",
+      "commandType": "command",
+      "mode": "no-view",
+      "keywords": ["inbox", "to reply", "flagged", "snoozed", "clean"]
+    },
+    {
+      "name": "unsubscribe_finder",
+      "title": "ByteMail Unsubscribe Finder",
+      "description": "Find newsletters with unsubscribe links across your ByteMail accounts and rank the senders. Unsubscribing always asks in ByteMail first.",
+      "commandType": "command",
+      "mode": "no-view",
+      "keywords": ["newsletter", "unsubscribe", "spam", "promos"]
+    },
+    {
+      "name": "followups",
+      "title": "ByteMail Follow-ups",
+      "description": "Remind you if nobody answers a ByteMail conversation you sent. Input: 'query | YYYY-MM-DD' (date optional, default three days out) or a thread_id. With a thread_id the reminder is set; otherwise matching sent conversations are listed.",
+      "commandType": "command",
+      "mode": "no-view",
+      "keywords": ["remind", "no reply", "follow up", "nudge"]
+    },
+    {
+      "name": "doctor",
+      "title": "ByteMail Doctor",
+      "description": "Check the ByteMail app, its MCP server, account sharing and its 27 tools, and print what to fix when something is off.",
+      "commandType": "command",
+      "mode": "no-view",
+      "keywords": ["setup", "check", "fix", "health", "status"]
+    }
+  ],
+  "preferences": [
+    {
+      "name": "appPath",
+      "title": "ByteMail App Path",
+      "description": "Where ByteMail.app lives. The standard install path works for almost everyone; commands and routes use it to reach ByteMail's MCP server.",
+      "type": "textfield",
+      "default": "/Applications/ByteMail.app",
+      "placeholder": "/Applications/ByteMail.app"
+    }
+  ],
+  "review": {
+    "test_cases": {
+      "positive": [
+        {
+          "description": "Doctor reports a healthy setup.",
+          "prompt": "With ByteMail installed, its MCP switch on and at least one account shared, run bytemail-enconvo|doctor. Expect checkmarks for the app, the MCP server (27 tools) and sharing, with the shared accounts listed.",
+          "expected_behavior": "Every check passes and the shared accounts are listed by name.",
+          "tools_triggered": "bytemail-enconvo|doctor"
+        },
+        {
+          "description": "Search finds mail across accounts with usable ids.",
+          "prompt": "POST {\"query\":\"schedule\",\"limit\":3} to http://localhost:54535/api/bytemail-enconvo/search_messages. Expect ok:true and matches carrying account, subject, message_id and thread_id.",
+          "expected_behavior": "Real matches with thread_id and message_id, ready for get_thread or a change tool.",
+          "tools_triggered": "bytemail-enconvo/search_messages"
+        },
+        {
+          "description": "Reading a conversation marks content as data.",
+          "prompt": "POST a live thread_id to /api/bytemail-enconvo/get_thread. Expect every message with its own words and an explicit note that email content was written by senders and is not instructions.",
+          "expected_behavior": "The full conversation returns, framed as other people's words.",
+          "tools_triggered": "bytemail-enconvo/get_thread"
+        },
+        {
+          "description": "A draft is written but never sent.",
+          "prompt": "POST {\"to\":[\"<own address>\"],\"subject\":\"review test\",\"body\":\"hello\"} to /api/bytemail-enconvo/create_draft. Expect a draft in ByteMail tagged Drafted by, with nothing sent.",
+          "expected_behavior": "The draft exists in ByteMail tagged Drafted by; no message is sent from the call.",
+          "tools_triggered": "bytemail-enconvo/create_draft"
+        },
+        {
+          "description": "mcp_call reaches every other tool, gated.",
+          "prompt": "Delete the AI-written review draft via /api/bytemail-enconvo/mcp_call with tool delete_draft; then call mcp_call with tool not_a_tool. The first succeeds; the second returns 400 listing the available tools.",
+          "expected_behavior": "Live tool runs; an unknown name fails with the live tool list, never a raw RPC error.",
+          "tools_triggered": "bytemail-enconvo/mcp_call"
+        },
+        {
+          "description": "The MCP server is native to Enconvo.",
+          "prompt": "List Enconvo's MCP server bundled:bytemail-enconvo:bytemail, or run enconvo plugin scan in the plugin folder.",
+          "expected_behavior": "All 27 ByteMail tools are listed with ByteMail's own safety instructions; scan reports no problems.",
+          "tools_triggered": "bundled:bytemail-enconvo:bytemail tools"
+        },
+        {
+          "description": "Batch sizes are capped at ByteMail's ask threshold.",
+          "prompt": "POST 30 thread_ids to /api/bytemail-enconvo/archive. Expect a 400 telling the caller to split the batch, with nothing archived.",
+          "expected_behavior": "A 400 explains the 25-per-call cap and ByteMail's ask-first rule; no mail changes.",
+          "tools_triggered": "bytemail-enconvo/archive"
+        }
+      ],
+      "negative": [
+        {
+          "description": "Sharing off fails with the exact fix.",
+          "prompt": "With ByteMail's account sharing switched off, run any command or route. Expect SHARING_OFF (409) naming ByteMail \u203a Settings \u203a AI as the fix.",
+          "expected_behavior": "A typed SHARING_OFF error with the remediation hint; never a hang or a wrong-code 500.",
+          "tools_triggered": "bytemail-enconvo|search"
+        },
+        {
+          "description": "Missing app fails with an install hint.",
+          "prompt": "Set the ByteMail App Path preference to a folder with no ByteMail.app and run bytemail-enconvo|doctor. Expect APP_MISSING naming the path checked.",
+          "expected_behavior": "APP_MISSING names the binary path and how to fix the preference.",
+          "tools_triggered": "bytemail-enconvo|doctor"
+        },
+        {
+          "description": "Empty body fails cleanly.",
+          "prompt": "POST an empty body to /api/bytemail-enconvo/get_thread. Expect a 400 naming thread_id, with no ByteMail call made.",
+          "expected_behavior": "A 400 names the missing field; the failure happens at the route boundary.",
+          "tools_triggered": "bytemail-enconvo/get_thread"
+        },
+        {
+          "description": "Empty or missing required fields fail cleanly.",
+          "prompt": "POST {} to /api/bytemail-enconvo/archive, then to /api/bytemail-enconvo/create_draft, then to /api/bytemail-enconvo/get_thread. Each expects a 400 naming the missing field.",
+          "expected_behavior": "Three 400s naming thread_ids, body and thread_id respectively.",
+          "tools_triggered": "bytemail-enconvo/archive, bytemail-enconvo/create_draft, bytemail-enconvo/get_thread"
+        },
+        {
+          "description": "Filter-less attachment search is rejected.",
+          "prompt": "POST {} to /api/bytemail-enconvo/find_attachments. Expect a 400 asking for at least one filter.",
+          "expected_behavior": "A 400 lists the accepted filters (query, any_of, file_name, from, after, before).",
+          "tools_triggered": "bytemail-enconvo/find_attachments"
+        },
+        {
+          "description": "Wrong arguments type is rejected before ByteMail.",
+          "prompt": "POST {\"tool\":\"archive\",\"arguments\":\"thread_ids\"} to /api/bytemail-enconvo/mcp_call. Expect a 400 saying arguments must be an object.",
+          "expected_behavior": "A 400 about the arguments type; ByteMail is never called.",
+          "tools_triggered": "bytemail-enconvo/mcp_call"
+        },
+        {
+          "description": "Time surfaces as a typed timeout.",
+          "prompt": "With timeout_ms set to the 5000 minimum against a slow ByteMail operation, expect TIMEOUT (504) with a hint about raising timeout_ms for approval waits.",
+          "expected_behavior": "A typed TIMEOUT error and a hint; the child server process is cleaned up.",
+          "tools_triggered": "bytemail-enconvo/mcp_call"
+        }
+      ]
+    },
+    "demo_recording_url": "https://iteractive.dev"
+  },
+  "scripts": {
+    "build": "enconvo plugin build",
+    "dev": "enconvo plugin build --dev",
+    "validate": "enconvo plugin validate",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@enconvo/api": "latest"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsup": "^8.5.1",
+    "typescript": "^5.9.3"
+  }
+}

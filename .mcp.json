@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "bytemail": {
+      "type": "stdio",
+      "command": "/Applications/ByteMail.app/Contents/MacOS/ByteMail",
+      "args": ["--mcp"]
+    }
+  }
+}
